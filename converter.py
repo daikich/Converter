@@ -1,4 +1,5 @@
 #import
+import os
 import tkinter as tk
 import subprocess
 import fitz
@@ -10,7 +11,7 @@ from tkinter import filedialog
 
 #window
 root = tk.Tk()
-root.title("変換")
+root.title("Converter")
 root.geometry("350x225")
 
 #変数
@@ -26,6 +27,8 @@ def file_p():
         print(file_path)
         label5.config(text="PATH:"+file_path)
         label_info.config(text="info:変換するファイルを選択しました")
+        content=os.path.splitext(os.path.basename(file_path))[0]
+        t_entry.insert(tk.END,content)
     else:
         print("パス指定失敗")
         label5.config(text="PATH:ファイルを選択してください")
@@ -35,6 +38,7 @@ def create_rectangle(canvas, x1, y1, x2, y2):
     canvas.create_rectangle(x1, y1, x2, y2, outline="black", width=1)
 
 def word2pdf():
+    get_txt()
     label_info.config(text="wordをpdfに変換しています")
     convert(file_path, "output/"+content+".pdf")
     label_info.config(text="変換できました")
@@ -42,6 +46,7 @@ def word2pdf():
     quit_me(root)
     
 def pdf2word():
+    get_txt()
     label_info.config(text="pdfをwordに変換しています")
     cv = Converter(file_path)
     label_info.config(text="変換できました")
@@ -51,6 +56,7 @@ def pdf2word():
     quit_me(root)
     
 def pdf2txt():
+    get_txt()
     label_info.config(text="pdfをtxtに変換しています")
     txt_path="output/"+content+".txt"
     pdf_path=file_path
@@ -78,6 +84,8 @@ def get_txt():
 def op():
     subprocess.Popen(['explorer', path], shell=True)
 
+if not os.path.exists("output"):
+    os.mkdir("output")
 #canvas
 canvas = tk.Canvas(root, width=400, height=300)
 canvas.pack()
@@ -90,7 +98,7 @@ label2 = tk.Label(text="現在の出力ファイル名")
 label2.place(x=10,y=55)
 #label3
 label3 = tk.Label(text=".(拡張子)")
-label3.place(x=210,y=80)
+label3.place(x=260,y=80)
 #label4
 label4 = tk.Label(text="変換するファイル")
 label4.place(x=10,y=10)
@@ -103,7 +111,7 @@ label_info.place(x=10,y=190)
 #text_box
 t_entry = tk.Entry(root, width=30)
 t_entry.insert(tk.END,"output")
-t_entry.place(x=20,y=80)
+t_entry.place(x=60,y=80)
 #button1
 Button1 = tk.Button(root,text="word→pdf",command=word2pdf)
 Button1.place(x=25,y=142)
@@ -114,11 +122,8 @@ Button2.place(x=145,y=142)
 Button3 = tk.Button(root,text="pdf→txt",command=pdf2txt)
 Button3.place(x=270,y=142)
 #button4
-Button4 = tk.Button(root, text="ファイル名変更", command=get_txt)
-Button4.place(x=265,y=74)
-#button5
-Button5 = tk.Button(root, text="参照", command=file_p)
-Button5.place(x=280,y=20)
+Button4 = tk.Button(root, text="参照", command=file_p)
+Button4.place(x=280,y=20)
 
 #rootmainloop
 root.mainloop()
